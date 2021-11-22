@@ -22,10 +22,10 @@ public class TestyPrihlasovaniNaKurzy {
     public static final String DATUM_NAROZENI = "1.11.2011";
     public static final String TLACITKO_VYTVORIT_PRIHLASKU = "//button[@type='submit']";
     public static final String VYTVORIT_NOVOU_PRIHLASKU = "(//div[@class='card-header text-right'])/a[contains(text(),'Vytvořit')]";
-    public static final String VYBRAT_TRETI_TYP_KURZU = "//div[@class='card-body text-center'])[3]/a[contains(text(),'inform')]";
-    public static final String VYTVORIT_PRIHLASKU_KURZU = "a[contains(@class, 'btn') and contains(.,'Vytvořit')]";
+    public static final String VYBRAT_TRETI_TYP_KURZU = "(//div[@class='card-body text-center'])[3]/a[contains(text(),'inform')]";
+    public static final String VYTVORIT_PRIHLASKU_KURZU = "//a[contains(@class, 'btn') and contains(.,'Vytvořit')]";
     public static final String TEXT_PRIHLASEN_V_HORNI_LISTE = "//*[contains(@class, 'nav-item') and contains(.,'Přihlášen')]";
-    public static final String BUTTON_TERMIN = "button[@class='btn dropdown-toggle btn-light']";
+    public static final String BUTTON_TERMIN = "//button[@class='btn dropdown-toggle btn-light']";
     public static final String POLE_DATUM = "//input[@type='search']";
 
     WebDriver prohlizec;
