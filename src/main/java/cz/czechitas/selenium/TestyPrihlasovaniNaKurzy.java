@@ -21,6 +21,12 @@ public class TestyPrihlasovaniNaKurzy {
     public static final String PRIJMENI_ZAKA = "Veselý";
     public static final String DATUM_NAROZENI = "1.11.2011";
     public static final String TLACITKO_VYTVORIT_PRIHLASKU = "//button[@type='submit']";
+    public static final String VYTVORIT_NOVOU_PRIHLASKU = "(//div[@class='card-header text-right'])/a[contains(text(),'Vytvořit')]";
+    public static final String VYBRAT_TRETI_TYP_KURZU = "//div[@class='card-body text-center'])[3]/a[contains(text(),'inform')]";
+    public static final String VYTVORIT_PRIHLASKU_KURZU = "a[contains(@class, 'btn') and contains(.,'Vytvořit')]";
+    public static final String TEXT_PRIHLASEN_V_HORNI_LISTE = "//*[contains(@class, 'nav-item') and contains(.,'Přihlášen')]";
+    public static final String BUTTON_TERMIN = "button[@class='btn dropdown-toggle btn-light']";
+    public static final String POLE_DATUM = "//input[@type='search']";
 
     WebDriver prohlizec;
     WebDriverWait cekani;
@@ -31,8 +37,8 @@ public class TestyPrihlasovaniNaKurzy {
       System.setProperty("webdriver.gecko.driver", System.getProperty("user.home") + "/Java-Training/Selenium/geckodriver");
 //        System.setProperty("webdriver.gecko.driver", "C:\\Java-Training\\Selenium\\geckodriver.exe");
         prohlizec = new FirefoxDriver();
-      cekani = new WebDriverWait(prohlizec,5);
-        prohlizec.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
+        cekani = new WebDriverWait(prohlizec,5);
+        prohlizec.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
 
     }
 
@@ -52,10 +58,15 @@ public class TestyPrihlasovaniNaKurzy {
     @Test // Ukol 3: Test Přihlásit do systemu -> Vybrat kurz -> Přihlásit dítě
     public void poPrihlaseniVybraniKurzuaPrihlaseniDiteteJePrihlaskaVSeznamu() {
         prihlasitUzivateleMarekVesely();
-        najdiPodleXPathAKlikni("//*[contains(@class, 'nav-item') and contains(.,'Pro rodiče')]");
-        najdiPodleXPathAKlikni("//*[contains(@class, 'dropdown-item') and contains(.,'Vytvořit přihlášku')]");
-        najdiPodleXPathAKlikni("button[@class='btn dropdown-toggle btn-light']");
-        najdiPodleXPathAVlozText("//input[@type='search']", "05\n");
+        najdiPodleXPathAKlikni(VYTVORIT_NOVOU_PRIHLASKU);
+        najdiPodleXPathAKlikni(VYBRAT_TRETI_TYP_KURZU);
+        najdiPodleXPathAKlikni(VYTVORIT_PRIHLASKU_KURZU);
+        vyplnAPosliPrihlasku();
+    }
+
+    private void vyplnAPosliPrihlasku() {
+        najdiPodleXPathAKlikni(BUTTON_TERMIN);
+        najdiPodleXPathAVlozText(POLE_DATUM, "05\n");
         najdiPodleIdAVlozText("forename", JMENO_ZAKA);
         najdiPodleIdAVlozText("surname", PRIJMENI_ZAKA);
         najdiPodleIdAVlozText("birthday", DATUM_NAROZENI);
@@ -63,10 +74,7 @@ public class TestyPrihlasovaniNaKurzy {
         najdiPodleIdAVlozText("note","prihlaska Test 3");
         najdiPodleIdAKlikni("terms_conditions");
         prohlizec.findElement(By.xpath(TLACITKO_VYTVORIT_PRIHLASKU)).click();
-
-
     }
-
 
 
     public void prihlasitUzivateleMarekVesely() {
@@ -75,7 +83,7 @@ public class TestyPrihlasovaniNaKurzy {
         najdiPodleIdAVlozText("password", HESLO);
         prohlizec.findElement(By.xpath(TLACITKO_PRIHLASIT)).click();
         Assertions.assertNotNull((cekani.until(ExpectedConditions.visibilityOfElementLocated(By.xpath
-                        ("//*[contains(@class, 'nav-item') and contains(.,'Přihlášen')]")))),
+                        (TEXT_PRIHLASEN_V_HORNI_LISTE)))),
                 "Uživatel není prihlasen");
     }
 
