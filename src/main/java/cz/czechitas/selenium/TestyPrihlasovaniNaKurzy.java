@@ -8,6 +8,7 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -34,6 +35,8 @@ public class TestyPrihlasovaniNaKurzy {
     public static final String TABULKA_PRIHLASENYCH_KURZU = "//table/tbody/tr/td[2]";
     public static final String DROP_DOWN_MENU_ODHLASENI = "//a[@class='dropdown-toggle']";
     public static final String TLACITKO_ODHLASIT = "logout-link";
+    public static final String ODKAZ_DOMŮ = "//*[contains(@class, 'nav-item') and contains(.,'Domů')]";
+    public static final String DRUHY_TYP_KURZU = "(//div[@class='card-body text-center'])[2]/a[contains(text(),'inform')]";
 
     WebDriver prohlizec;
     WebDriverWait cekani;
@@ -60,6 +63,7 @@ public class TestyPrihlasovaniNaKurzy {
                         (TEXT_PRIHLASEN_V_HORNI_LISTE)))), "Uživatel není prihlasen");
     }
 
+    @Disabled
     @Test // Ukol 2: Test Vybrat kurz -> Přihlásit do systemu -> Přihlásit dítě
     public void poVybraniKurzuPrihlaseniaPrihlaseniDiteteJePrihlaskaVSeznamu () {
         prohlizec.navigate().to(URL);
@@ -94,6 +98,19 @@ public class TestyPrihlasovaniNaKurzy {
         int pocetKurzuPoPrihlasce = kontrolaPoctuPrihlasenychKurzu();
         Assertions.assertEquals(pocetKurzuPredPrihlaskou,pocetKurzuPoPrihlasce-1,
                 "Kurz nebyl registrovan");
+    }
+
+    @Test // Ukol 4: Test ověření počtu vypsaných termínů kurzu HTML - musi byt 4.
+    public void pocetKurzuHTMLMusiByt4 () {
+        prohlizec.navigate().to(URL);
+        najdiPodleXPathAKlikni(ODKAZ_NA_PRIHLASENI);
+        prihlasitUzivateleMarekVesely();
+        najdiPodleXPathAKlikni(ODKAZ_DOMŮ);
+        najdiPodleXPathAKlikni(DRUHY_TYP_KURZU);
+        najdiPodleXPathAKlikni(VYTVORIT_PRIHLASKU_KURZU);
+        najdiPodleXPathAKlikni(BUTTON_TERMIN);
+        List<WebElement> pocetTerminu = prohlizec.findElements(By.xpath("//li/a[@class='dropdown-item']"));
+        Assertions.assertEquals(pocetTerminu.size(),4,"Pocet terminu nesedi.");
     }
 
     private int kontrolaPoctuPrihlasenychKurzu() {
