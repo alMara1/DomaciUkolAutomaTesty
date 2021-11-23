@@ -20,13 +20,20 @@ public class TestyPrihlasovaniNaKurzy {
     public static final String JMENO_ZAKA = "Albert Jáchym";
     public static final String PRIJMENI_ZAKA = "Veselý";
     public static final String DATUM_NAROZENI = "1.11.2011";
-    public static final String TLACITKO_VYTVORIT_PRIHLASKU = "//button[@type='submit']";
+    public static final String TLACITKO_VYTVORIT_PRIHLASKU = "//input[@type='submit']";
     public static final String VYTVORIT_NOVOU_PRIHLASKU = "(//div[@class='card-header text-right'])/a[contains(text(),'Vytvořit')]";
     public static final String VYBRAT_TRETI_TYP_KURZU = "(//div[@class='card-body text-center'])[3]/a[contains(text(),'inform')]";
     public static final String VYTVORIT_PRIHLASKU_KURZU = "//a[contains(@class, 'btn') and contains(.,'Vytvořit')]";
     public static final String TEXT_PRIHLASEN_V_HORNI_LISTE = "//*[contains(@class, 'nav-item') and contains(.,'Přihlášen')]";
-    public static final String BUTTON_TERMIN = "//button[@class='btn dropdown-toggle btn-light']";
+    public static final String BUTTON_TERMIN = "//button[contains(@class,'btn dropdown-toggle btn-light')]";
     public static final String POLE_DATUM = "//input[@type='search']";
+    public static final String SOUHLAS_S_PODMINKAMI = "//label[@class='custom-control-label' and @for='terms_conditions']";
+    public static final String PLATBA_FKSP = "//label[@class='custom-control-label' and @for='payment_fksp']";
+    public static final String ODKAZ_NA_PRIHLASENI = "//*[contains(@class, 'nav-item') and contains(.,'Přihlásit')]";
+    public static final String ODKAZ_NA_PRIHLASKY = "//*[contains(@class, 'nav-item') and contains(.,'Přihlášky')]";
+    public static final String TABULKA_PRIHLASENYCH_KURZU = "//table/tbody/tr/td[2]";
+    public static final String DROP_DOWN_MENU_ODHLASENI = "//a[@class='dropdown-toggle']";
+    public static final String TLACITKO_ODHLASIT = "logout-link";
 
     WebDriver prohlizec;
     WebDriverWait cekani;
@@ -40,45 +47,75 @@ public class TestyPrihlasovaniNaKurzy {
         cekani = new WebDriverWait(prohlizec,5);
         prohlizec.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
 
+
     }
 
     @Disabled
     @Test // Ukol 1: Test přihlášení existujícího uživatele.
     public void poZadaniSpravnychUdajuJeUzivatelPrihlasen() {
-
-        prohlizec.navigate().to(URL+"prihlaseni");
-        najdiPodleIdAVlozText("email",UZIVATELSKY_EMAIL);
-        najdiPodleIdAVlozText("password",HESLO);
-        prohlizec.findElement(By.xpath(TLACITKO_PRIHLASIT)).click();
+        prohlizec.navigate().to(URL);
+        najdiPodleXPathAKlikni(ODKAZ_NA_PRIHLASENI);
+        prihlasitUzivateleMarekVesely();
         Assertions.assertNotNull((cekani.until(ExpectedConditions.visibilityOfElementLocated(By.xpath
-                        ("//*[contains(@class, 'nav-item') and contains(.,'Přihlášen')]")))),
-                "Uživatel není prihlasen");
+                        (TEXT_PRIHLASEN_V_HORNI_LISTE)))), "Uživatel není prihlasen");
     }
 
+    @Test // Ukol 2: Test Vybrat kurz -> Přihlásit do systemu -> Přihlásit dítě
+    public void poVybraniKurzuPrihlaseniaPrihlaseniDiteteJePrihlaskaVSeznamu () {
+        prohlizec.navigate().to(URL);
+        najdiPodleXPathAKlikni(ODKAZ_NA_PRIHLASENI);
+        prihlasitUzivateleMarekVesely();
+        int pocetKurzuPredPrihlaskou = kontrolaPoctuPrihlasenychKurzu();
+        najdiPodleXPathAKlikni(DROP_DOWN_MENU_ODHLASENI);
+        najdiPodleIdAKlikni(TLACITKO_ODHLASIT);
+        najdiPodleXPathAKlikni(VYBRAT_TRETI_TYP_KURZU);
+        najdiPodleXPathAKlikni(VYTVORIT_PRIHLASKU_KURZU);
+        prihlasitUzivateleMarekVesely();
+        vyplnAPosliPrihlasku();
+        najdiPodleXPathAKlikni(ODKAZ_NA_PRIHLASKY);
+        int pocetKurzuPoPrihlasce = kontrolaPoctuPrihlasenychKurzu();
+        Assertions.assertEquals(pocetKurzuPredPrihlaskou,pocetKurzuPoPrihlasce-1,
+                "Kurz nebyl registrovan");
+
+    }
+
+    @Disabled
     @Test // Ukol 3: Test Přihlásit do systemu -> Vybrat kurz -> Přihlásit dítě
     public void poPrihlaseniVybraniKurzuaPrihlaseniDiteteJePrihlaskaVSeznamu() {
+        prohlizec.navigate().to(URL);
+        najdiPodleXPathAKlikni(ODKAZ_NA_PRIHLASENI);
         prihlasitUzivateleMarekVesely();
+        int pocetKurzuPredPrihlaskou = kontrolaPoctuPrihlasenychKurzu();
         najdiPodleXPathAKlikni(VYTVORIT_NOVOU_PRIHLASKU);
         najdiPodleXPathAKlikni(VYBRAT_TRETI_TYP_KURZU);
         najdiPodleXPathAKlikni(VYTVORIT_PRIHLASKU_KURZU);
         vyplnAPosliPrihlasku();
+        najdiPodleXPathAKlikni(ODKAZ_NA_PRIHLASKY);
+        int pocetKurzuPoPrihlasce = kontrolaPoctuPrihlasenychKurzu();
+        Assertions.assertEquals(pocetKurzuPredPrihlaskou,pocetKurzuPoPrihlasce-1,
+                "Kurz nebyl registrovan");
+    }
+
+    private int kontrolaPoctuPrihlasenychKurzu() {
+        List<WebElement> seznamKurzu = prohlizec.findElements(By.xpath(TABULKA_PRIHLASENYCH_KURZU));
+        int pocetKurzu = seznamKurzu.size();
+        return pocetKurzu;
     }
 
     private void vyplnAPosliPrihlasku() {
         najdiPodleXPathAKlikni(BUTTON_TERMIN);
-        najdiPodleXPathAVlozText(POLE_DATUM, "05\n");
+        najdiPodleXPathAVlozText(POLE_DATUM, "03\n");
         najdiPodleIdAVlozText("forename", JMENO_ZAKA);
         najdiPodleIdAVlozText("surname", PRIJMENI_ZAKA);
         najdiPodleIdAVlozText("birthday", DATUM_NAROZENI);
-        najdiPodleIdAKlikni("payment_fksp");
+        najdiPodleXPathAKlikni(PLATBA_FKSP);
         najdiPodleIdAVlozText("note","prihlaska Test 3");
-        najdiPodleIdAKlikni("terms_conditions");
+        najdiPodleXPathAKlikni(SOUHLAS_S_PODMINKAMI);
         prohlizec.findElement(By.xpath(TLACITKO_VYTVORIT_PRIHLASKU)).click();
     }
 
 
     public void prihlasitUzivateleMarekVesely() {
-        prohlizec.navigate().to(URL + "prihlaseni");
         najdiPodleIdAVlozText("email", UZIVATELSKY_EMAIL);
         najdiPodleIdAVlozText("password", HESLO);
         prohlizec.findElement(By.xpath(TLACITKO_PRIHLASIT)).click();
@@ -86,7 +123,6 @@ public class TestyPrihlasovaniNaKurzy {
                         (TEXT_PRIHLASEN_V_HORNI_LISTE)))),
                 "Uživatel není prihlasen");
     }
-
 
     public void najdiPodleIdAVlozText(String idElementu, String posliText) {
         cekani.until(ExpectedConditions.visibilityOfElementLocated(By.id(idElementu))).sendKeys(posliText);
