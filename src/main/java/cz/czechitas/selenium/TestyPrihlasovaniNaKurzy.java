@@ -49,11 +49,9 @@ public class TestyPrihlasovaniNaKurzy {
         prohlizec = new FirefoxDriver();
         cekani = new WebDriverWait(prohlizec,5);
         prohlizec.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
-
-
     }
 
-    @Disabled
+
     @Test // Ukol 1: Test přihlášení existujícího uživatele.
     public void poZadaniSpravnychUdajuJeUzivatelPrihlasen() {
         prohlizec.navigate().to(URL);
@@ -63,7 +61,7 @@ public class TestyPrihlasovaniNaKurzy {
                         (TEXT_PRIHLASEN_V_HORNI_LISTE)))), "Uživatel není prihlasen");
     }
 
-    @Disabled
+
     @Test // Ukol 2: Test Vybrat kurz -> Přihlásit do systemu -> Přihlásit dítě
     public void poVybraniKurzuPrihlaseniaPrihlaseniDiteteJePrihlaskaVSeznamu () {
         prohlizec.navigate().to(URL);
@@ -80,10 +78,8 @@ public class TestyPrihlasovaniNaKurzy {
         int pocetKurzuPoPrihlasce = kontrolaPoctuPrihlasenychKurzu();
         Assertions.assertEquals(pocetKurzuPredPrihlaskou,pocetKurzuPoPrihlasce-1,
                 "Kurz nebyl registrovan");
-
     }
 
-    @Disabled
     @Test // Ukol 3: Test Přihlásit do systemu -> Vybrat kurz -> Přihlásit dítě
     public void poPrihlaseniVybraniKurzuaPrihlaseniDiteteJePrihlaskaVSeznamu() {
         prohlizec.navigate().to(URL);
@@ -155,29 +151,6 @@ public class TestyPrihlasovaniNaKurzy {
 
     public void najdiPodleXPathAKlikni(String xPathElementu) {
         cekani.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xPathElementu))).click();
-    }
-
-    @Disabled
-    @Test
-    public void zviratVTabulceMusiByt7() {
-        prohlizec.navigate().to("https://automation-playground.czechitas.repl.co/");
-        WebElement zalozkaTabulka = prohlizec.findElement(By.id("table"));
-        zalozkaTabulka.click();
-
-        List<WebElement> seznamZvirat = prohlizec.findElements(By.xpath("//table/tbody/tr/td[1]"));
-        Assertions.assertEquals(7, seznamZvirat.size());
-    }
-    @Disabled
-    @Test
-    public void prvniZvireVTabulceMusiBytKocka() {
-        prohlizec.navigate().to("https://automation-playground.czechitas.repl.co/");
-        WebElement zalozkaTabulka = prohlizec.findElement(By.id("table"));
-        zalozkaTabulka.click();
-
-        List<WebElement> seznamZvirat = prohlizec.findElements(By.xpath("//table/tbody/tr/td[1]"));
-        WebElement elementPrvnihoZvirete = seznamZvirat.get(0);
-        String prvniZvire = elementPrvnihoZvirete.getText();
-        Assertions.assertEquals("Kočka", prvniZvire);
     }
 
     @AfterEach
