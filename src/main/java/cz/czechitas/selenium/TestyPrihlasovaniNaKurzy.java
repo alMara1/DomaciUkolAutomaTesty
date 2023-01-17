@@ -18,8 +18,8 @@ public class TestyPrihlasovaniNaKurzy {
     public static final String HESLO = "123myJsmeBratri";
     public static final String URL = "https://cz-test-jedna.herokuapp.com/";
     public static final String TLACITKO_PRIHLASIT = "//button[@type='submit']";
-    public static final String JMENO_ZAKA = "Albert Jáchym";
-    public static final String PRIJMENI_ZAKA = "Veselý";
+    public static final String JMENO_ZAKA = "Petr";
+    public static final String PRIJMENI_ZAKA = "Mírný";
     public static final String DATUM_NAROZENI = "1.11.2011";
     public static final String TLACITKO_VYTVORIT_PRIHLASKU = "//input[@type='submit']";
     public static final String VYTVORIT_NOVOU_PRIHLASKU = "(//div[@class='card-header text-right'])/a[contains(text(),'Vytvořit')]";
